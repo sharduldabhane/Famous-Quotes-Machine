@@ -2,9 +2,10 @@ from flask import Flask, render_template, request, url_for, Markup
 import os
 import pandas as pd
 import numpy as np
-from random import randrange
 
 import nltk
+import secrets
+
 nltk.download('vader_lexicon')
 
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
@@ -45,7 +46,7 @@ def prepare_sentiment_quote_stash():
 
 
 def gimme_a_quote(direction = None, current_index = None, max_index_value = 0):
-    rand_index = randrange(max_index_value)
+    rand_index = secrets.SystemRandom().randrange(max_index_value)
     darker = None
     brighter = None
 
@@ -69,7 +70,7 @@ def gimme_a_quote(direction = None, current_index = None, max_index_value = 0):
 
         if current_index > 0:
             # try for a lesser value than current one
-            rand_index = randrange(0, current_index)
+            rand_index = secrets.SystemRandom().randrange(0, current_index)
         else:
             # already at lowest point so assign a new random of full set
             rand_index = rand_index
@@ -84,7 +85,7 @@ def gimme_a_quote(direction = None, current_index = None, max_index_value = 0):
 
         # try for a higher value than current one
         if current_index < max_index_value -1:
-            rand_index = randrange(current_index, max_index_value)
+            rand_index = secrets.SystemRandom().randrange(current_index, max_index_value)
         else:
             # already at highest point so assign a new random of full set
             rand_index = rand_index
@@ -99,7 +100,7 @@ def gimme_a_quote(direction = None, current_index = None, max_index_value = 0):
 def quote_me():
     quote_stash_tmp = quotes.copy()
     max_index_value = np.max(quote_stash_tmp['index'].values)
-    rand_index_value = randrange(max_index_value)
+    rand_index_value = secrets.SystemRandom().randrange(max_index_value)
 
     darker = request.args.get("darker")
     brighter = request.args.get("brighter")
@@ -110,7 +111,7 @@ def quote_me():
         	current_index = int(darker)
         except ValueError:
             # somebody is gaming the system
-            current_index = randrange(max_index_value)
+            current_index = secrets.SystemRandom().randrange(max_index_value)
 
         new_index = gimme_a_quote(direction =  'darker', current_index = current_index, max_index_value = max_index_value)
 
@@ -127,7 +128,7 @@ def quote_me():
 
     else:
     	# grab a random value
-    	new_index = randrange(max_index_value)
+    	new_index = secrets.SystemRandom().randrange(max_index_value)
 
     random_quote = quote_stash_tmp.iloc[new_index]
 
